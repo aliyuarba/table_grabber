@@ -70,25 +70,32 @@ function copyToClipboard(){
     var myButtons = document.querySelectorAll('.button_injected_by_masaldev');
     myButtons.forEach(function(button,index){
         button.addEventListener('click',function(){
-            // Get the corresponding content element
-            var contentToCopy = tables[index];
+            
+            var target = tables[index].innerHTML;
 
+            // make new temporary tables to store table target and modify it in background
+            var tempTables = document.createElement('table');
+            tempTables.innerHTML = target;
+            document.body.appendChild(tempTables)
+            replaceBrWithSpaces(tempTables)
+            
             // Create a range and select the content
             var range = document.createRange();
-            range.selectNode(contentToCopy);
+            range.selectNode(tempTables);
             
             // Create a selection and select the range
             var selection = window.getSelection();
             selection.removeAllRanges();
             selection.addRange(range);
-            replaceBrWithSpaces(tables[index])
+            // replaceBrWithSpaces(tables[index])
             
             // Execute the copy command
             document.execCommand('copy');
             
             // Deselect the content
             selection.removeAllRanges();
-            console.log('table copied.')
+            document.body.removeChild(tempTables);
+            console.log('table copied.');
 
             // change copybutton to text "copied!" when it's done.
             button.innerHTML = '<span>&#10003; Copied!</span>';
